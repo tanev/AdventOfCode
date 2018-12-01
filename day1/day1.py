@@ -18,12 +18,12 @@ def getchange(changes):
     the previous one (starting with 0).
     returns the first frequency seen twice with the list of changes'''
     resfreq = 0
-    frequencies = [resfreq]
+    frequencies = {resfreq: 0}
     for change in itertools.cycle(changes):
         resfreq += change
         if resfreq in frequencies:
             return resfreq
-        frequencies.append(resfreq)
+        frequencies[resfreq] = change
     return None
 
 def dotests():

@@ -4,14 +4,12 @@ import itertools
 import sys
 
 def getfreqchanges(ifile):
+    '''Reads ints from a file'''
     with open(ifile) as ftarget:
         return [
             int(i.rstrip('\n')) for i in ftarget.readlines()
             if i != ''
         ]
-
-def pattern():
-    pass
 
 def getchange(changes):
     '''changes: list of integers, calculates just the differences between the present and
@@ -30,15 +28,15 @@ def dotests():
     '''just ensure examples are working'''
     assert getchange([1, -1]) == 0
     assert getchange([3, 3, 4, -2, -4]) == 10
-    assert getchange([-6, +3, +8, +5, -6]) == 5
-    assert getchange([+7, +7, -2, -7, -4]) == 14
+    assert getchange([-6, 3, 8, 5, -6]) == 5
+    assert getchange([7, 7, -2, -7, -4]) == 14
 
 def main(ifile):
     '''
     ifile str path to file to read frequency changes from.
 
-    Gets all frequency changes from ifile, sums the changes in the frequency.
-    returns sum'''
+    Gets all frequency changes from ifile.
+    does tests, then prints the results from both parts of the challenge'''
     listchanges = getfreqchanges(ifile)
     print('answer to part1: {a}'.format(a=sum(listchanges)))
     dotests()

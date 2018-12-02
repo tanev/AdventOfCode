@@ -39,6 +39,31 @@ For example, if you see the following box IDs:
 Of these box IDs, four of them contain a letter which appears exactly twice, and three
 of them contain a letter which appears exactly three times. Multiplying these together
 produces a checksum of 4 * 3 = 12.
+
+--- Part Two ---
+
+Confident that your list of box IDs is complete, you're ready to find the
+ boxes full of prototype fabric.
+
+The boxes will have IDs which differ by exactly one character at the same position
+in both strings. For example, given the following box IDs:
+
+abcde
+fghij
+klmno
+pqrst
+fguij
+axcye
+wvxyz
+
+The IDs abcde and axcye are close, but they differ by two characters (the second and fourth).
+However, the IDs fghij and fguij differ by exactly one character, the third (h and u).
+Those must be the correct boxes.
+
+What letters are common between the two correct box IDs?
+(In the example above, this is found by removing the differing character
+from either ID, producing fgij.)
+
 '''
 
 import sys
@@ -68,8 +93,41 @@ def getcounts(istr, counts=None):
             counts[val] += 1
 
 
+def oneletter(box1, box2):
+    '''box1, box2: str (same length)
+
+    returns True if there is only one letter difference between
+    them
+    '''
+    assert len(box1) == len(box2)
+    length = len(box1)
+    res = [
+        ord(box1[i]) - ord(box2[i]) for i in range(length)
+    ]
+    res = [i for i in res if i != 0]
+    if len(res) == 1:
+        return True
+    return False
+
+
+def findflip(lboxes):
+    '''Searches for box ID with only one letter difference
+    returns results list with tuples containing (box1, box2)'''
+    results = []
+    oneletter('fghij', 'fguij')
+    end = len(lboxes)
+    for ind1 in range(end):
+        # walk from this one to all the others
+        for ind2 in range(ind1+1, end):
+            tup = (lboxes[ind1], lboxes[ind2])
+            if oneletter(*tup):
+                results.append(tup)
+    return results
+
+
 def runtests():
     '''Ensures the provided examples above are working'''
+    # part 1
     cases = [
         ('abcdef', {2: 0, 3: 0}),
         ('bababc', {2: 1, 3: 1}),
@@ -83,6 +141,18 @@ def runtests():
         counts = {2: 0, 3: 0}
         getcounts(case[0], counts=counts)
         assert counts == case[1]
+
+    # part 2
+    tlist = [
+        'abcde',
+        'fghij',
+        'klmno',
+        'pqrst',
+        'fguij',
+        'axcye',
+        'wvxyz'
+    ]
+    assert findflip(tlist) == [('fghij', 'fguij')]
 
 
 def main(infile):
@@ -99,6 +169,16 @@ def main(infile):
             r=counts[2] * counts[3]
         )
     )
+    res = findflip(inputs)
+    if len(res) != 1:
+        print('Failed to find result for part 2', file=sys.stderr)
+    else:
+        box1 = res[0][0]
+        box2 = res[0][1]
+        letters = [
+            box1[i] for i in range(len(box1)) if box1[i] == box2[i]
+        ]
+        print('Part2 result (common letters): {i}'.format(i=''.join(letters)))
 
 
 if __name__ == '__main__':
